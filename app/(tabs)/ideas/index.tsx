@@ -1,6 +1,7 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNotesStore } from '../../../store/noteStore';
 import { useAppTheme } from '../../../constants/theme';
 import { spacing } from '../../../constants/theme';
@@ -28,6 +29,12 @@ export default function IdeasScreen() {
         )}
         ListEmptyComponent={<View />}
       />
+      <TouchableOpacity
+  style={[styles.fab, { backgroundColor: theme.primary }]}
+  onPress={() => router.push('/nueva-nota')}
+>
+  <MaterialCommunityIcons name="plus" size={28} color="#fff" />
+</TouchableOpacity>
     </View>
   );
 }
@@ -35,4 +42,15 @@ export default function IdeasScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   list: { padding: spacing.md },
+  fab: {
+    position: 'absolute',
+    bottom: spacing.lg,
+    right: spacing.lg,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  }
 });
