@@ -1,9 +1,9 @@
 import { View, Text } from 'react-native';
 
-export default function NotasScreen() {
+export default function IdeasScreen() {
     return (
         <View>
-         <Text>Pantalla de Notas</Text>   
+         <Text>Pantalla de Ideas</Text>   
         </View>
     );
 }
