@@ -1,0 +1,28 @@
+# NoteFlow — Reglas para Windsurf AI
+
+## Contexto del proyecto
+App móvil de productividad con React Native y Expo SDK 54.
+Tres tipos de contenido: notas de texto, checklists e ideas con etiquetas.
+
+## Stack
+- React Native 0.74 + Expo SDK 54
+- TypeScript estricto
+- Expo Router para navegación basada en archivos
+- Gluestack UI como librería de componentes
+- Zustand para estado global
+- Shopify FlashList para listas
+- Zod para validación
+- AsyncStorage para persistencia
+
+## Convenciones de código
+- Todos los componentes en TypeScript con tipos explícitos
+- Nombres de componentes en PascalCase
+- Nombres de archivos en kebab-case excepto componentes
+- Carpetas: app/ components/ store/ types/ constants/ docs/
+- Sin any en TypeScript, siempre tipos concretos
+
+## Restricciones importantes
+- No usar FlatList, siempre FlashList
+- No usar Context API, siempre Zustand
+- No usar StyleSheet inline, usar el sistema de diseño de constants/theme.ts
+- Expo SDK 54 únicamente, no instalar paquetes incompatibles
