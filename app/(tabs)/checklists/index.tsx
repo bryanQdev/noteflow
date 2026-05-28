@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNotesStore } from '../../../store/noteStore';
+import { useNotesStore } from '../../../store/notesStore';
 import { useAppTheme, spacing } from '../../../constants/theme';
 import ChecklistCard from '../../../components/items/ChecklistCard';
 import { ChecklistNote } from '../../../types';

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { z } from 'zod';
-import { useNotesStore } from '../store/noteStore';
+import { useNotesStore } from '../store/notesStore';
 import { useAppTheme, typography, spacing } from '../constants/theme';
 
 const noteSchema = z.object({
