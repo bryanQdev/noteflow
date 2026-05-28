@@ -1,11 +1,21 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNotesStore } from '../../../store/notesStore';
-import { useAppTheme, spacing } from '../../../constants/theme';
+import { useAppTheme, spacing, typography } from '../../../constants/theme';
 import ChecklistCard from '../../../components/items/ChecklistCard';
 import { ChecklistNote } from '../../../types';
+
+function EmptyState({ message }: { message: string }) {
+  const theme = useAppTheme();
+  return (
+    <View style={styles.emptyContainer}>
+      <MaterialCommunityIcons name="checkbox-blank-outline" size={64} color={theme.textSecondary} />
+      <Text style={[styles.emptyText, { color: theme.textSecondary }]}>{message}</Text>
+    </View>
+  );
+}
 
 export default function ChecklistsScreen() {
   const theme = useAppTheme();
@@ -16,7 +26,7 @@ export default function ChecklistsScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <FlashList
         data={checklists}
-        // @ts-ignore - estimatedItemSize is valid but types are outdated
+        //@ts-ignore
         estimatedItemSize={100}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
@@ -26,14 +36,14 @@ export default function ChecklistsScreen() {
             onPress={() => router.push(`/checklists/${item.id}`)}
           />
         )}
-        ListEmptyComponent={<View />}
+        ListEmptyComponent={<EmptyState message="No hay checklists aún. Pulsa + para crear uno." />}
       />
       <TouchableOpacity
-  style={[styles.fab, { backgroundColor: theme.primary }]}
-  onPress={() => router.push('/nueva-nota')}
->
-  <MaterialCommunityIcons name="plus" size={28} color="#fff" />
-</TouchableOpacity>
+        style={[styles.fab, { backgroundColor: theme.primary }]}
+        onPress={() => router.push('/nueva-nota')}
+      >
+        <MaterialCommunityIcons name="plus" size={28} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -41,6 +51,8 @@ export default function ChecklistsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   list: { padding: spacing.md },
+  emptyContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 100 },
+  emptyText: { fontSize: typography.sizes.md, marginTop: spacing.md, textAlign: 'center' },
   fab: {
     position: 'absolute',
     bottom: spacing.lg,
@@ -51,5 +63,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-  }
+  },
 });
