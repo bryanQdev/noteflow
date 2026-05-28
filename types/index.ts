@@ -2,7 +2,7 @@ export interface BaseNote {
     id: string;
     title: string;
     createdAt: Date;
-    updateAt: Date;
+    updatedAt: Date;
 }
 
 export interface Note extends BaseNote {

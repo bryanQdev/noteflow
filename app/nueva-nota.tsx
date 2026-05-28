@@ -8,12 +8,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { z } from 'zod';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNotesStore } from '../store/notesStore';
 import { useAppTheme, typography, spacing } from '../constants/theme';
+import { ChecklistItem } from '../types';
 
 const noteSchema = z.object({
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
@@ -42,8 +43,25 @@ export default function NuevaNota() {
   const [tags, setTags] = useState('');
   const [color, setColor] = useState('#FFD700');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [items, setItems] = useState<ChecklistItem[]>([]);
+  const [newItem, setNewItem] = useState('');
 
   const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#95E1D3', '#F38181'];
+
+  const handleAddItem = () => {
+    if (newItem.trim() === '') return;
+    const item: ChecklistItem = {
+      id: Date.now().toString(),
+      text: newItem.trim(),
+      isCompleted: false,
+    };
+    setItems([...items, item]);
+    setNewItem('');
+  };
+
+  const handleRemoveItem = (id: string) => {
+    setItems(items.filter((i) => i.id !== id));
+  };
 
   const handleSave = () => {
     setErrors({});
@@ -54,13 +72,11 @@ export default function NuevaNota() {
       const result = noteSchema.safeParse({ title, content });
       if (!result.success) {
         const fieldErrors: Record<string, string> = {};
-        result.error.issues.forEach((e: any) => {
-          fieldErrors[e.path[0]] = e.message;
-        });
+        result.error.issues.forEach((e: any) => { fieldErrors[e.path[0]] = e.message; });
         setErrors(fieldErrors);
         return;
       }
-      addNote({ id, title, content, createdAt: now, updateAt: now });
+      addNote({ id, title, content, createdAt: now, updatedAt: now });
     }
 
     if (type === 'checklist') {
@@ -69,16 +85,14 @@ export default function NuevaNota() {
         setErrors({ title: result.error.issues[0].message });
         return;
       }
-      addChecklist({ id, title, items: [], createdAt: now, updateAt: now });
+      addChecklist({ id, title, items, createdAt: now, updatedAt: now });
     }
 
     if (type === 'idea') {
       const result = ideaSchema.safeParse({ title, tags });
       if (!result.success) {
         const fieldErrors: Record<string, string> = {};
-        result.error.issues.forEach((e: any) => {
-          fieldErrors[e.path[0]] = e.message;
-        });
+        result.error.issues.forEach((e: any) => { fieldErrors[e.path[0]] = e.message; });
         setErrors(fieldErrors);
         return;
       }
@@ -88,7 +102,7 @@ export default function NuevaNota() {
         tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
         color,
         createdAt: now,
-        updateAt: now,
+        updatedAt: now,
       });
     }
 
@@ -107,10 +121,7 @@ export default function NuevaNota() {
           {(['nota', 'checklist', 'idea'] as NoteType[]).map((t) => (
             <TouchableOpacity
               key={t}
-              style={[
-                styles.typeButton,
-                { borderColor: theme.border, backgroundColor: type === t ? theme.primary : theme.surface },
-              ]}
+              style={[styles.typeButton, { borderColor: theme.border, backgroundColor: type === t ? theme.primary : theme.surface }]}
               onPress={() => setType(t)}
             >
               <Text style={{ color: type === t ? '#fff' : theme.text }}>{t}</Text>
@@ -140,6 +151,37 @@ export default function NuevaNota() {
               multiline
             />
             {errors.content && <Text style={[styles.error, { color: theme.error }]}>{errors.content}</Text>}
+          </>
+        )}
+
+        {type === 'checklist' && (
+          <>
+            <Text style={[styles.label, { color: theme.text }]}>Items</Text>
+            <View style={styles.itemInputRow}>
+              <TextInput
+                style={[styles.input, styles.itemInput, { borderColor: theme.border, color: theme.text, backgroundColor: theme.surface }]}
+                value={newItem}
+                onChangeText={setNewItem}
+                placeholder="Añadir item..."
+                placeholderTextColor={theme.textSecondary}
+                onSubmitEditing={handleAddItem}
+              />
+              <TouchableOpacity
+                style={[styles.addItemButton, { backgroundColor: theme.primary }]}
+                onPress={handleAddItem}
+              >
+                <MaterialCommunityIcons name="plus" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+
+            {items.map((item) => (
+              <View key={item.id} style={[styles.itemRow, { borderColor: theme.border, backgroundColor: theme.surface }]}>
+                <Text style={[styles.itemText, { color: theme.text }]}>{item.text}</Text>
+                <TouchableOpacity onPress={() => handleRemoveItem(item.id)}>
+                  <MaterialCommunityIcons name="close" size={20} color={theme.error} />
+                </TouchableOpacity>
+              </View>
+            ))}
           </>
         )}
 
@@ -192,4 +234,9 @@ const styles = StyleSheet.create({
   colorCircle: { width: 36, height: 36, borderRadius: 18 },
   saveButton: { borderRadius: 8, padding: spacing.md, alignItems: 'center', marginTop: spacing.lg, marginBottom: spacing.xl },
   saveButtonText: { color: '#fff', fontSize: typography.sizes.md, fontWeight: typography.weights.bold },
+  itemInputRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
+  itemInput: { flex: 1 },
+  addItemButton: { width: 44, height: 44, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  itemRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderRadius: 8, padding: spacing.sm, marginTop: spacing.xs },
+  itemText: { fontSize: typography.sizes.md, flex: 1 },
 });
