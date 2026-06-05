@@ -2,9 +2,16 @@ import { Stack } from 'expo-router';
 import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 import { useColorScheme } from 'react-native';
 import { colors } from '../constants/theme';
+import { useEffect } from 'react';
+import { useNotesStore } from '../store/notesStore';
 
 export default function RootLayout() {
   const scheme = useColorScheme();
+  const fetchNotes = useNotesStore((state) => state.fetchNotes);
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
 
   const lightTheme = {
     ...MD3LightTheme,
@@ -30,21 +37,20 @@ export default function RootLayout() {
     },
   };
 
-  const theme = scheme ==='dark' ? darkTheme : lightTheme
+  const theme = scheme === 'dark' ? darkTheme : lightTheme;
   
   return (
     <PaperProvider theme={theme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen 
-        name="nueva-nota"
-        options={{
-          presentation: 'modal',
-          title: 'Nueva nota'
-
-        }} 
+          name="nueva-nota"
+          options={{
+            presentation: 'modal',
+            title: 'Nueva nota'
+          }} 
         />
       </Stack>
     </PaperProvider>
   );  
-} 
+}
