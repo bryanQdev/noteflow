@@ -17,6 +17,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.iambr.noteflow",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -28,7 +29,15 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
-    ]
+      "expo-router",
+      "@react-native-firebase/app"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9cfe52f0-de4c-4f34-9a14-c00ed8fae2f2"
+      }
+    },
+    "owner": "owl9810"
   }
 }
